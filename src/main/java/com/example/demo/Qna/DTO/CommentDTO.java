@@ -2,6 +2,7 @@ package com.example.demo.Qna.DTO;
 
 import com.example.demo.Qna.Entity.Comment;
 import com.example.demo.Qna.Entity.Post;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,7 +10,9 @@ import lombok.Setter;
 public class CommentDTO {
     @Setter
     @Getter
+    @Builder
     public static class Request {
+        private Long id;
         private String writer;
         private String password;
         private String content;
@@ -18,7 +21,6 @@ public class CommentDTO {
     }
 
     public static class Response {
-
     }
 
 }

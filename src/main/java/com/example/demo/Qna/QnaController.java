@@ -11,10 +11,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 
@@ -30,7 +27,7 @@ public class QnaController {
     {
         Post post = postService.save(postDTO);
         Long newId = post.getId();
-        String redirectUrl = "/qna/post" + newId;
+        String redirectUrl = "/qna/post" + "/" + newId;
 
         return ResponseEntity.status(HttpStatus.FOUND)
                 .header("Location", redirectUrl)
@@ -49,7 +46,46 @@ public class QnaController {
     }
 
     @GetMapping("/qna/post/{id}")
-    public ResponseEntity<>
+    public ResponseEntity<PostDTO.response> getPostById(@PathVariable Long id)
+    {
+        PostDTO.response postResponseDto =  PostDTO.response.toResponseDTO(postService.findPostById(id));
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(postResponseDto);
+    }
+
+    @DeleteMapping("/qna/post/{id}")
+    public ResponseEntity<String> deletePost(@RequestBody PostDTO.request request)
+    {
+        postService.delete(request.getId(), request.getPassword());
+        return ResponseEntity.status(HttpStatus.OK)
+                .body("Post is deleted successfully!");
+    }
+
+    @DeleteMapping("/qna/post/{postId}/delete-comment")
+    public ResponseEntity<String> deleteComment(@RequestBody CommentDTO.Request request)
+    {
+        commentService.removeCommentFromPost(request);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body("Post is deleted successfully!");
+    }
+
+
+    @PatchMapping("/qna/post/{postId}")
+    public ResponseEntity<String> updatePost(@RequestBody PostDTO.request request)
+    {
+        postService.update(request);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body("Post is updated successfully!");
+    }
+
+    @PatchMapping("/qna/post/{postId}/update-comment")
+    public ResponseEntity<String> updateComment(@RequestBody CommentDTO.Request request)
+    {
+        commentService.updateComment(request);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body("Comment is updated successfully!");
+    }
 
 
 }

@@ -24,23 +24,33 @@ public class Post extends BaseTimeEntity {
     private Long id;
     private String writer;
     private String title;
+    private String password;
     private String content;
 
-    @OneToMany(mappedBy = "parentPost", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "parentPost", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private List<Comment> comments = new ArrayList<>();
     public void addComment(Comment comment)
     {
         comments.add(comment);
+        comment.assignToPost(this);
     }
     public void removeComment(Comment comment)
     {
         comments.remove(comment);
-        comment.remove();
+        comment.removeFromPost();
     }
-    public void updatePost(String title, String content)
+    public void updatePost(PostDTO.request request)
     {
-        this.title = title;
-        this.content = content;
+        if(request.getWriter() != null)
+            this.writer = request.getWriter();
+        if(request.getTitle() != null)
+            this.title = request.getTitle();
+        if(request.getContent() != null)
+            this.content = request.getContent();
+        if(request.getPassword() != null)
+            this.password = request.getPassword();
     }
+
+
 }
